@@ -1,7 +1,14 @@
 const Hero = () => {
   return(
     <div className="py-4 px-6">
-        <span>12345</span>
+        <div className="grid grid-cols-2">
+          <div className="flex flex-col">
+            <p className="text-7xl leading-22">Buat bisnis mu laris dengan bantuan <span className="text-blue-600">Chatbot</span> Kami</p>
+          </div>
+          <div className="">
+              <img src="" alt="" />
+          </div>
+        </div>
     </div>
   )
 };
