@@ -1,8 +1,8 @@
 const Hero = () => {
   return(
-    <>
-        <span>12</span>
-    </>
+    <div className="py-4 px-6">
+        <span>12345</span>
+    </div>
   )
 };
 
