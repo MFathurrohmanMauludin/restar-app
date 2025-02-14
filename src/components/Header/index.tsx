@@ -1,15 +1,30 @@
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 
 const Header = () => {
-  return(
-    <div className="py-2 px-4 flex justify-between items-center border border-gray-300">
-          <NavLink to="/">
-            <img className="w-full max-h-[38px] object-center" src="https://1000logos.net/wp-content/uploads/2016/11/Facebook-Logo-2019.png" height={100} alt="logo" />
-          </NavLink>
+  const location = useLocation();
+  const { pathname } = location;
 
+  return (
+    <div className="py-2 px-4 flex justify-between items-center border border-gray-300">
+      <NavLink to="/">
+        <img
+          className="w-full max-h-[38px] object-center"
+          src="https://1000logos.net/wp-content/uploads/2016/11/Facebook-Logo-2019.png"
+          height={100}
+          alt="logo"
+        />
+      </NavLink>
+
+      {pathname !== "/start-chat" && (
         <nav className="space-x-4">
-            <NavLink className="px-4 py-[10px] bg-gradient-to-tr text-white font-semibold rounded-full from-blue-700 via-cyan-300 to-fuchsia-300 text-[16px] capitalize" to="/start-chat">mulai chat</NavLink>
+          <NavLink
+            className="px-4 py-[10px] bg-gradient-to-tr text-white font-semibold rounded-full from-blue-700 via-cyan-300 to-fuchsia-300 text-[16px] capitalize"
+            to="/start-chat"
+          >
+            mulai chat
+          </NavLink>
         </nav>
+      )}
     </div>
   );
 };
