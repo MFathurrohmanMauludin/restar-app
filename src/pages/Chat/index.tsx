@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NavLink } from "react-router";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 const Chat = () => {
   const [question, setQuestion] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false); // State untuk indikator loading
-  const [imageUrl, setImageUrl] = useState(""); // Output gambar AI
 
   const fetchData = async () => {
     if (!question.trim()) {
-      setResponse("silakan masukkan pertanyaan anda terlebih dahulu!");
+      setResponse("Silakan masukkan pertanyaan anda terlebih dahulu 😭");
       return;
     }
 
@@ -36,47 +37,54 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[20%_80%]">
-      {/* riwayat chat */}
-      <div className="p-4 max-w-[36ch]">
+    <div className="grid grid-cols-[20%_80%] h-screen w-screen xs:grid-cols-1">
+      {/* history */}
+      <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 xs:hidden">
         <div className="underline">Riwayat</div>
-        <NavLink className="line-clamp-1" to={"/start-chat?question=bagaimana cara membuat makanan dari singkong?"}>
+        <NavLink
+          className="line-clamp-1"
+          to={
+            "/start-chat?question=bagaimana cara membuat makanan dari singkong?"
+          }
+        >
           bagaimana cara membuat makanan dari singkong?
         </NavLink>
         <div>tentang bisnis</div>
       </div>
 
-      {/* bagian chat */}
-      <div className="p-4 flex flex-col justify-evenly gap-y-4 border-l-2 border-gray-300 max-h-screen overflow-y-auto">
-        {/* jawaban */}
-        {response ? (
-          <div className="border border-gray-400 p-2 rounded">
-            {" "}
-            {response}
+      {/* chat section */}
+      <div className="relative flex flex-col h-screen">
+        {/* answer */}
+        <div className="overflow-y-auto px-[10em] py-6 max-h-[80%]">
+          {" "}
+          {response ? response : <span>Cari kuliner hari ini</span>}
+        </div>
+
+        {/* search */}
+        <div className="absolute bottom-[8%] right-0 left-0 bg-white px-[10em] pb-2">
+          <div className="relative flex flex-row items-center gap-x-2">
+            <input
+              className="h-10 p-2 grow outline outline-gray-400 focus:outline-blue-400 rounded-lg"
+              type="text"
+              name="search"
+              id="search"
+              placeholder="Cari ide bisnis anda..."
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
+
+            <button
+              className="bg-blue-600 text-white h-[44px] w-[44px] outline-0 cursor-pointer rounded-full"
+              type="submit"
+              onClick={fetchData}
+            >
+              {loading ? <FontAwesomeIcon fontSize={16} icon={faCircle}/> : <FontAwesomeIcon icon={faPaperPlane} />}
+              
+            </button>
           </div>
-        ) : (
-          <span>cari kuliner hari ini</span>
-        )}
 
-        {/* kolom pencarian */}
-        <div className="space-x-1">
-          <input
-            className="p-2 w-[80%] outline outline-gray-400 focus:outline-blue-400 rounded"
-            type="text"
-            name="search"
-            id="search"
-            placeholder="Cari ide bisnis anda..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-
-          <button
-            className="bg-blue-600 text-white px-4 py-2 outline-0 cursor-pointer rounded-full"
-            type="submit"
-            onClick={fetchData}
-          >
-            {loading ? "sedang diproses..." : "kirim"}
-          </button>
+          {/* info penting */}
+          <div className="text-center py-1 text-sm"><span className="font-bold">Kulbot</span> bisa membuat kesalahan. Cek info lainnya di tempat lain!</div>
         </div>
       </div>
     </div>
