@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NavLink } from "react-router";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 const Chat = () => {
@@ -37,9 +37,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[20%_80%] h-screen w-screen xs:grid-cols-1">
+    <div className="grid grid-cols-[20%_80%] h-screen w-screen max-sm:grid-cols-1">
       {/* history */}
-      <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 xs:hidden">
+      <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 max-sm:hidden">
         <div className="underline">Riwayat</div>
         <NavLink
           className="line-clamp-1"
@@ -55,13 +55,19 @@ const Chat = () => {
       {/* chat section */}
       <div className="relative flex flex-col h-screen">
         {/* answer */}
-        <div className="overflow-y-auto px-[10em] py-6 max-h-[80%]">
+        <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4">
           {" "}
-          {response ? response : <span>Cari kuliner hari ini</span>}
+          {response ? (
+            <div className="border-[1px] border-gray-300 p-2 rounded">
+              {response}
+            </div>
+          ) : (
+            <span>Cari kuliner hari ini</span>
+          )}
         </div>
 
         {/* search */}
-        <div className="absolute bottom-[8%] right-0 left-0 bg-white px-[10em] pb-2">
+        <div className="absolute bottom-[8%] right-0 left-0 bg-white px-[10em] max-sm:px-4 pb-2">
           <div className="relative flex flex-row items-center gap-x-2">
             <input
               className="h-10 p-2 grow outline outline-gray-400 focus:outline-blue-400 rounded-lg"
@@ -78,13 +84,18 @@ const Chat = () => {
               type="submit"
               onClick={fetchData}
             >
-              {loading ? <FontAwesomeIcon fontSize={16} icon={faCircle}/> : <FontAwesomeIcon icon={faPaperPlane} />}
-              
+              {loading ? (
+                <FontAwesomeIcon fontSize={16} icon={faCircle} />
+              ) : (
+                <FontAwesomeIcon icon={faPaperPlane} fontSize={16} />
+              )}
             </button>
           </div>
-
           {/* info penting */}
-          <div className="text-center py-1 text-sm"><span className="font-bold">Kulbot</span> bisa membuat kesalahan. Cek info lainnya di tempat lain!</div>
+          <div className="text-center py-1 text-sm">
+            <span className="font-bold">Kulbot</span> bisa membuat kesalahan,
+            cek info lebih lanjut.
+          </div>
         </div>
       </div>
     </div>
