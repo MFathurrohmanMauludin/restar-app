@@ -24,7 +24,10 @@ const Chat = () => {
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const result = await model.generateContent(
-        `jawaban harus bahasa indonesia dan tentang kuliner Indonesia: ${question}`
+        `list kuliner Indonesia tentang ${question} dan buat dalam JSON dengan schema ini:
+        food = {'foodName': string, 'description': string, 'city': string, 'price': integer, 'imageUrl': string}
+        Return: Array<food>
+        `
       );
       const text = result.response.text(); // Ensure correct data extraction
 
