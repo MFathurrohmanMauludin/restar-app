@@ -37,7 +37,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[20%_80%] h-screen w-screen max-sm:grid-cols-1">
+    <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1">
       {/* history */}
       <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 max-sm:hidden">
         <div className="underline">Riwayat</div>
@@ -67,7 +67,7 @@ const Chat = () => {
         </div>
 
         {/* search */}
-        <div className="absolute bottom-[8%] right-0 left-0 bg-white px-[10em] max-sm:px-4 pb-2">
+        <div className="absolute bottom-[10%] right-0 left-0 bg-white px-[10em] max-sm:px-4 pb-2">
           <div className="relative flex flex-row items-center gap-x-2">
             <input
               className="h-10 p-2 grow outline outline-gray-400 focus:outline-blue-400 rounded-lg"
