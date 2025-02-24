@@ -4,6 +4,14 @@ import { NavLink } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
+interface FoodItem {
+  foodName: string;
+  description: string;
+  city: string;
+  price: number;
+  img: string;
+}
+
 const Chat = () => {
   const [question, setQuestion] = useState("");
   const [response, setResponse] = useState("");
@@ -24,14 +32,15 @@ const Chat = () => {
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const result = await model.generateContent(
-        `list kuliner Indonesia tentang ${question} dan buat dalam JSON dengan schema ini:
-        food = {'foodName': string, 'description': string, 'city': string, 'price': integer, 'img': string}
+        `list kuliner Indonesia tentang ${question} dan hanya tampilkan dalam bentuk JSON dengan schema ini:
+        food = {'foodName': string, 'description': string, 'city': string, 'recept': string, 'ingredient': string, 'estimatedCostatRupiah': integer, 'price': integer, 'img': string}
         Return: Array<food>
         `
       );
-      const text = result.response.text(); // Ensure correct data extraction
 
-      setResponse(text);
+      const text = result.response.text(); // Ensure correct data extraction
+    
+      setResponse(text.replace(/```json|```/g, "").trim());
     } catch (error) {
       setResponse("Error fetching response.");
       console.error("Error:", error);
@@ -40,9 +49,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1">
+    <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
       {/* history */}
-      <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 max-sm:hidden">
+      <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 max-sm:hidden max-md:hidden">
         <div className="underline">Riwayat</div>
         <NavLink
           className="line-clamp-1"
@@ -58,11 +67,15 @@ const Chat = () => {
       {/* chat section */}
       <div className="relative flex flex-col h-screen">
         {/* answer */}
-        <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4">
+        <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4 max-md:px-6">
           {" "}
           {response ? (
             <div className="border-[1px] border-gray-300 p-2 rounded">
-              {response}
+              {JSON.parse(response).map((data: any, index: number) => 
+                <div className="flex flex-col" key={index}>
+                  <h1>{data.foodName}</h1>
+                </div>
+              )}
             </div>
           ) : (
             <span>Cari kuliner hari ini</span>
@@ -70,7 +83,7 @@ const Chat = () => {
         </div>
 
         {/* search */}
-        <div className="absolute bottom-[10%] right-0 left-0 bg-white px-[10em] max-sm:px-4 pb-2">
+        <div className="absolute bottom-[10%] right-0 left-0 bg-white px-[10em] max-sm:px-4 max-md:px-6 pb-2">
           <div className="relative flex flex-row items-center gap-x-2">
             <input
               className="h-10 p-2 grow outline outline-gray-400 focus:outline-blue-400 rounded-lg"
