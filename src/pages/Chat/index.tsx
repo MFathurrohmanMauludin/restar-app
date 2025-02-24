@@ -104,7 +104,7 @@ const Chat = () => {
               {response}
             </div>
           ) : (
-            <span>Cari resep makanan atau minuman apa hari ini?</span>
+            <span>Ciptakan resep baru atau jelajahi yang sudah ada dengan kami</span>
           )}
         </div>
 
@@ -112,12 +112,12 @@ const Chat = () => {
         <div className="absolute bottom-[10%] right-0 left-0 bg-white px-[10em] max-sm:px-4 max-md:px-6 pb-2">
           <div className="relative flex flex-row items-center gap-x-2">
             <input
-              className="h-10 p-2 grow outline outline-gray-400 focus:outline-blue-400 rounded-lg 
+              className="h-10 p-2 grow outline outline-gray-400 focus:outline-gray-950 rounded-lg 
               placeholder-gray-950 focus:placeholder-gray-600"
               type="text"
               name="search"
               id="search"
-              placeholder="Cari resep apa hari ini?"
+              placeholder="Cari resep makanan dan minuman apa hari ini?"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
