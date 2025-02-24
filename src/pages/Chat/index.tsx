@@ -32,14 +32,14 @@ const Chat = () => {
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const result = await model.generateContent(
-        `list kuliner Indonesia tentang ${question} dan hanya tampilkan dalam bentuk JSON dengan schema ini:
-        food = {'foodName': string, 'description': string, 'city': string, 'recept': string, 'ingredient': string, 'estimatedCostatRupiah': integer, 'price': integer, 'img': string}
+        `list kuliner Indonesia tentang ${question} dan hanya ditampilkan dalam bentuk JSON dengan schema ini:
+        food = {'foodName': string, 'description': string, 'city': string, 'completeRecept': Array, 'ingredient': [{'name': string, 'measure': string}], 'estimatedCostatRupiah': integer, 'price': integer, 'img': string}
         Return: Array<food>
         `
       );
 
       const text = result.response.text(); // Ensure correct data extraction
-    
+
       setResponse(text.replace(/```json|```/g, "").trim());
     } catch (error) {
       setResponse("Error fetching response.");
@@ -71,14 +71,40 @@ const Chat = () => {
           {" "}
           {response ? (
             <div className="border-[1px] border-gray-300 p-2 rounded">
-              {JSON.parse(response).map((data: any, index: number) => 
-                <div className="flex flex-col" key={index}>
-                  <h1>{data.foodName}</h1>
+              {JSON.parse(response).map((data: any, index: number) => (
+                <div className="flex flex-col mb-4" key={index}>
+                  <span className="text-2xl font-semibold">
+                    {index + 1}. {data.foodName}
+                  </span>
+                  {/* description */}
+                  <p>{data.description}</p>
+
+                  {/* recept */}
+                  <span className="text-lg font-semibold mt-2">
+                    Resep {data.foodName}
+                  </span>
+
+                  <span>Bahan yang diperlukan:</span>
+                  <ul className="list-disc list-inside">
+                    {data.ingredient.map((item: any, index: number) => (
+                      <li key={index}>
+                        {item.name} {item.measure}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <span className="mt-1 font-semibold">Cara memasak: </span>
+                  <ol className="list-decimal list-inside">
+                    {data.completeRecept.map((item: any, index: number) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ol>
                 </div>
-              )}
+              ))}
+              {response}
             </div>
           ) : (
-            <span>Cari kuliner hari ini</span>
+            <span>Cari resep hari ini</span>
           )}
         </div>
 
