@@ -4,26 +4,20 @@ import { NavLink } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
-interface FoodItem {
-  foodName: string;
-  description: string;
-  city: string;
-  price: number;
-  img: string;
-}
-
 const Chat = () => {
   const [question, setQuestion] = useState("");
   const [response, setResponse] = useState("");
+  const [alert, setAlert] = useState("Cari resep makanan dan minuman apa hari ini?");
   const [loading, setLoading] = useState(false); // State untuk indikator loading
 
   const fetchData = async () => {
     if (!question.trim()) {
-      setResponse("Silakan masukkan pertanyaan anda terlebih dahulu 😭");
+      setAlert("Silakan masukkan pertanyaan anda terlebih dahulu 😭");
       return;
     }
 
     setLoading(true);
+    setAlert("Cari resep makanan dan minuman apa hari ini?");
     setResponse(""); // delete answer after user get the result
 
     try {
@@ -33,7 +27,7 @@ const Chat = () => {
 
       const result = await model.generateContent(
         `list kuliner Indonesia tentang ${question} dan hanya ditampilkan dalam bentuk JSON dengan schema ini:
-        food = {'foodName': string, 'description': string, 'city': string, 'completeRecept': Array, 'ingredient': [{'name': string, 'measure': string}], 'estimatedCostatRupiah': integer, 'price': integer, 'img': string}
+        food = {'foodName': string, 'description': string, 'completeRecept': [{'number': integer, 'step': string}], 'ingredient': [{'name': string, 'servingSize': string}], 'estimatedCostatRupiah': integer, 'price': integer, 'img': string}
         Return: Array<food>
         `
       );
@@ -68,7 +62,6 @@ const Chat = () => {
       <div className="relative flex flex-col h-screen">
         {/* answer */}
         <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4 max-md:px-6">
-          {" "}
           {response ? (
             <div className="border-[1px] border-gray-300 p-2 rounded">
               {JSON.parse(response).map((data: any, index: number) => (
@@ -88,23 +81,30 @@ const Chat = () => {
                   <ul className="list-disc list-inside">
                     {data.ingredient.map((item: any, index: number) => (
                       <li key={index}>
-                        {item.name} {item.measure}
+                        {item.name} {item.servingSize}
                       </li>
                     ))}
                   </ul>
 
                   <span className="mt-1 font-semibold">Cara memasak: </span>
-                  <ol className="list-decimal list-inside">
-                    {data.completeRecept.map((item: any, index: number) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ol>
+
+                  {data.completeRecept.map((item: any, index: number) => (
+                    <p key={index}>
+                      {item.number}. {item.step}
+                    </p>
+                  ))}
+
+                  <span className="font-semibold">
+                    Estimasi biaya yang dikeluarkan: Rp{" "}
+                    {data.estimatedCostatRupiah}
+                  </span>
                 </div>
               ))}
-              {response}
             </div>
           ) : (
-            <span>Ciptakan resep baru atau jelajahi yang sudah ada dengan kami</span>
+            <span>
+              Ciptakan resep baru atau jelajahi yang sudah ada dengan kami
+            </span>
           )}
         </div>
 
@@ -117,7 +117,7 @@ const Chat = () => {
               type="text"
               name="search"
               id="search"
-              placeholder="Cari resep makanan dan minuman apa hari ini?"
+              placeholder={alert}
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
