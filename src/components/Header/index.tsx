@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from "react-router";
+import logo from "/src/assets/logo.svg";
 
 const Header = () => {
   const location = useLocation();
@@ -9,7 +10,7 @@ const Header = () => {
       <NavLink to="/">
         <img
           className="w-full max-h-[38px] object-center"
-          src="https://1000logos.net/wp-content/uploads/2016/11/Facebook-Logo-2019.png"
+          src={logo}
           height={100}
           alt="logo"
         />

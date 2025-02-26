@@ -7,7 +7,9 @@ import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 const Chat = () => {
   const [question, setQuestion] = useState("");
   const [response, setResponse] = useState("");
-  const [alert, setAlert] = useState("Cari resep makanan dan minuman apa hari ini?");
+  const [alert, setAlert] = useState(
+    "Cari resep makanan dan minuman apa hari ini?"
+  );
   const [loading, setLoading] = useState(false); // State untuk indikator loading
 
   const fetchData = async () => {
@@ -35,6 +37,21 @@ const Chat = () => {
       const text = result.response.text(); // Ensure correct data extraction
 
       setResponse(text.replace(/```json|```/g, "").trim());
+
+      // localstorage
+      const cleanResponse = text.replace(/```json|```/g, "").trim();
+
+      const chatHistory = JSON.parse(
+        localStorage.getItem("chatHistory") || "[]"
+      );
+      
+      const newEntry = { question, response: cleanResponse };
+
+      localStorage.setItem(
+        "chatHistory",
+        JSON.stringify([...chatHistory, newEntry])
+      );
+
     } catch (error) {
       setResponse("Error fetching response.");
       console.error("Error:", error);
