@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NavLink } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { generateUniqueCode } from "../../utils/generatedCode";
 
 const Chat = () => {
   const [question, setQuestion] = useState("");
@@ -11,6 +12,7 @@ const Chat = () => {
     "Cari resep makanan dan minuman apa hari ini?"
   );
   const [loading, setLoading] = useState(false); // State untuk indikator loading
+  const [history, setHistory] = useState("");
 
   const fetchData = async () => {
     if (!question.trim()) {
@@ -24,7 +26,6 @@ const Chat = () => {
 
     try {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY);
-
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const result = await model.generateContent(
@@ -34,30 +35,35 @@ const Chat = () => {
         `
       );
 
-      const text = result.response.text(); // Ensure correct data extraction
-
-      setResponse(text.replace(/```json|```/g, "").trim());
-
-      // localstorage
+      const text = result.response.text();
       const cleanResponse = text.replace(/```json|```/g, "").trim();
 
+      setResponse(cleanResponse);
+
+      // Save to localStorage
+      const uniqueKey = generateUniqueCode(); // Generate unique key
       const chatHistory = JSON.parse(
-        localStorage.getItem("chatHistory") || "[]"
-      );
-      
-      const newEntry = { question, response: cleanResponse };
-
-      localStorage.setItem(
-        "chatHistory",
-        JSON.stringify([...chatHistory, newEntry])
+        localStorage.getItem("chatHistory") || "{}"
       );
 
+      // Save new entry
+      chatHistory[uniqueKey] = [{ question, response: JSON.parse(cleanResponse) }];
+      localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
     } catch (error) {
       setResponse("Error fetching response.");
       console.error("Error:", error);
     }
+
     setLoading(false);
   };
+
+  // Load history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = JSON.parse(
+      localStorage.getItem("chatHistory") || "[]"
+    );
+    setHistory(savedHistory);
+  }, []);
 
   return (
     <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
@@ -153,7 +159,7 @@ const Chat = () => {
           </div>
           {/* info penting */}
           <div className="text-center py-1 text-sm">
-            <span className="font-bold">Restar</span> bisa membuat kesalahan,
+            <span className="font-bold">RAI</span> bisa membuat kesalahan,
             cek info lebih lanjut.
           </div>
         </div>
