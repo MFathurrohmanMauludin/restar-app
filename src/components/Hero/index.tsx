@@ -3,7 +3,7 @@ const Hero = () => {
     <div className="py-4 px-6">
         <div className="grid grid-cols-2">
           <div className="flex flex-col">
-            <p className="text-7xl leading-22">Buat bisnis mu laris dengan bantuan <span className="text-blue-600">Chatbot</span> Kami</p>
+            <p className="text-6xl leading-22">Buat bisnis kuliner mu laris dengan bantuan <span className="text-blue-600">Chatbot</span> Kami</p>
           </div>
           <div className="">
               <img src="" alt="" />
