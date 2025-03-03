@@ -1,18 +1,38 @@
 import { useEffect, useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { generateUniqueCode } from "../../utils/generatedCode";
 
+interface Ingredient {
+  name: string;
+  servingSize: string;
+}
+
+interface RecipeStep {
+  number: number;
+  step: string;
+}
+
+interface Food {
+  foodName: string;
+  description: string;
+  completeRecept: RecipeStep[];
+  ingredient: Ingredient[];
+  estimatedCostatRupiah: number;
+  price: number;
+  img: string;
+}
+
 const Chat = () => {
   const [question, setQuestion] = useState("");
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState<Food[]>([]);
   const [alert, setAlert] = useState(
     "Cari resep makanan dan minuman apa hari ini?"
   );
-  const [loading, setLoading] = useState(false); // State untuk indikator loading
-  const [history, setHistory] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<Record<string, { question: string }[]>>({});
 
   const fetchData = async () => {
     if (!question.trim()) {
@@ -22,7 +42,7 @@ const Chat = () => {
 
     setLoading(true);
     setAlert("Cari resep makanan dan minuman apa hari ini?");
-    setResponse(""); // delete answer after user get the result
+    setResponse([]);
 
     try {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY);
@@ -30,125 +50,92 @@ const Chat = () => {
 
       const result = await model.generateContent(
         `list kuliner Indonesia tentang ${question} dan hanya ditampilkan dalam bentuk JSON dengan schema ini:
-        food = {'foodName': string, 'description': string, 'completeRecept': [{'number': integer, 'step': string}], 'ingredient': [{'name': string, 'servingSize': string}], 'estimatedCostatRupiah': integer, 'price': integer, 'img': string}
-        Return: Array<food>
+        [{ "foodName": string, "description": string, "completeRecept": [{"number": integer, "step": string}], "ingredient": [{"name": string, "servingSize": string}], "estimatedCostatRupiah": integer, "price": integer, "img": string }]
         `
       );
 
       const text = result.response.text();
       const cleanResponse = text.replace(/```json|```/g, "").trim();
+      const parsedResponse: Food[] = JSON.parse(cleanResponse);
 
-      setResponse(cleanResponse);
+      setResponse(parsedResponse);
 
       // Save to localStorage
-      const uniqueKey = generateUniqueCode(); // Generate unique key
-      const chatHistory = JSON.parse(
-        localStorage.getItem("chatHistory") || "{}"
-      );
-
-      // Save new entry
-      chatHistory[uniqueKey] = [{ question, response: JSON.parse(cleanResponse) }];
+      const uniqueKey = generateUniqueCode();
+      const chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+      chatHistory[uniqueKey] = [{ question, response: parsedResponse }];
       localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
     } catch (error) {
-      setResponse("Error fetching response.");
+      setResponse([]);
       console.error("Error:", error);
     }
-
     setLoading(false);
   };
 
-  // Load history from localStorage on component mount
   useEffect(() => {
-    const savedHistory = JSON.parse(
-      localStorage.getItem("chatHistory") || "[]"
-    );
+    const savedHistory = JSON.parse(localStorage.getItem("chatHistory") || "{}");
     setHistory(savedHistory);
   }, []);
 
   return (
     <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
-      {/* history */}
-      <div className="p-4 max-w-[36ch] border-r-[1px] border-gray-300 max-sm:hidden max-md:hidden">
+      {/* History */}
+      <div className="p-4 max-w-[36ch] border-r border-gray-300 max-sm:hidden max-md:hidden">
         <div className="underline">Riwayat</div>
-        <NavLink
-          className="line-clamp-1"
-          to={
-            "/start-chat?question=bagaimana cara membuat makanan dari singkong?"
-          }
-        >
-          bagaimana cara membuat makanan dari singkong?
-        </NavLink>
-        <div>tentang bisnis</div>
+        {Object.keys(history).map((key, index) => (
+          <NavLink className="line-clamp-1" to={`/start-chat?id=${key}`} key={index}>
+            {history[key][0]?.question}
+          </NavLink>
+        ))}
       </div>
 
-      {/* chat section */}
+      {/* Chat Section */}
       <div className="relative flex flex-col h-screen">
-        {/* answer */}
         <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4 max-md:px-6">
-          {response ? (
-            <div className="border-[1px] border-gray-300 p-2 rounded">
-              {JSON.parse(response).map((data: any, index: number) => (
+          {response.length > 0 ? (
+            <div className="border border-gray-300 p-2 rounded">
+              {response.map((data, index) => (
                 <div className="flex flex-col mb-4" key={index}>
                   <span className="text-2xl font-semibold">
                     {index + 1}. {data.foodName}
                   </span>
-                  {/* description */}
                   <p>{data.description}</p>
-
-                  {/* recept */}
-                  <span className="text-lg font-semibold mt-2">
-                    Resep {data.foodName}
-                  </span>
-
+                  <span className="text-lg font-semibold mt-2">Resep {data.foodName}</span>
                   <span>Bahan yang diperlukan:</span>
                   <ul className="list-disc list-inside">
-                    {data.ingredient.map((item: any, index: number) => (
-                      <li key={index}>
-                        {item.name} {item.servingSize}
-                      </li>
+                    {data.ingredient.map((item, idx) => (
+                      <li key={idx}>{item.name} {item.servingSize}</li>
                     ))}
                   </ul>
-
                   <span className="mt-1 font-semibold">Cara memasak: </span>
-
-                  {data.completeRecept.map((item: any, index: number) => (
-                    <p key={index}>
-                      {item.number}. {item.step}
-                    </p>
+                  {data.completeRecept.map((item, idx) => (
+                    <p key={idx}>{item.number}. {item.step}</p>
                   ))}
-
                   <span className="font-semibold">
-                    Estimasi biaya yang dikeluarkan: Rp{" "}
-                    {data.estimatedCostatRupiah}
+                    Estimasi biaya yang dikeluarkan: Rp {data.estimatedCostatRupiah}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <span>
-              Ciptakan resep baru atau jelajahi yang sudah ada dengan kami
-            </span>
+            <span>Ciptakan resep baru atau jelajahi yang sudah ada dengan kami</span>
           )}
         </div>
 
-        {/* search */}
+        {/* Search */}
         <div className="absolute bottom-[10%] right-0 left-0 bg-white px-[10em] max-sm:px-4 max-md:px-6 pb-2">
           <div className="relative flex flex-row items-center gap-x-2">
             <input
-              className="h-10 p-2 grow outline outline-gray-400 focus:outline-gray-950 rounded-lg 
-              placeholder-gray-950 focus:placeholder-gray-600"
+              className="h-10 p-2 grow outline outline-gray-400 focus:outline-gray-950 rounded-lg"
               type="text"
-              name="search"
-              id="search"
               placeholder={alert}
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
-
             <button
-              className="bg-blue-600 text-white h-[44px] w-[44px] outline-0 cursor-pointer rounded-full"
-              type="submit"
+              className="bg-blue-600 text-white h-[44px] w-[44px] rounded-full"
               onClick={fetchData}
+              disabled={loading}
             >
               {loading ? (
                 <FontAwesomeIcon fontSize={16} icon={faCircle} />
@@ -157,10 +144,8 @@ const Chat = () => {
               )}
             </button>
           </div>
-          {/* info penting */}
           <div className="text-center py-1 text-sm">
-            <span className="font-bold">RAI</span> bisa membuat kesalahan,
-            cek info lebih lanjut.
+            <span className="font-bold">RAI</span> bisa membuat kesalahan, cek info lebih lanjut.
           </div>
         </div>
       </div>
