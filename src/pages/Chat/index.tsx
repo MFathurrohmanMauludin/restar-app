@@ -65,6 +65,7 @@ const Chat = () => {
       const chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "{}");
       chatHistory[uniqueKey] = [{ question, response: parsedResponse }];
       localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+      setHistory(chatHistory); // Update history state
     } catch (error) {
       setResponse([]);
       console.error("Error:", error);
@@ -76,7 +77,7 @@ const Chat = () => {
     const savedHistory = JSON.parse(localStorage.getItem("chatHistory") || "{}");
     setHistory(savedHistory);
   }, []);
-
+    
   return (
     <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
       {/* History */}
