@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { generateUniqueCode } from "../../utils/generatedCode";
@@ -33,6 +33,7 @@ const Chat = () => {
   );
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<Record<string, { question: string }[]>>({});
+  const {key} = useLocation();
 
   const fetchData = async () => {
     if (!question.trim()) {
@@ -134,14 +135,14 @@ const Chat = () => {
               onChange={(e) => setQuestion(e.target.value)}
             />
             <button
-              className="bg-blue-600 text-white h-[44px] w-[44px] rounded-full"
+              className="animate-paper bg-[#6443DD] hover:bg-[#34169E] text-white h-[44px] w-[44px] rounded-full"
               onClick={fetchData}
               disabled={loading}
             >
               {loading ? (
                 <FontAwesomeIcon fontSize={16} icon={faCircle} />
               ) : (
-                <FontAwesomeIcon icon={faPaperPlane} fontSize={16} />
+                <FontAwesomeIcon className="paper" icon={faPaperPlane} fontSize={16} />
               )}
             </button>
           </div>
