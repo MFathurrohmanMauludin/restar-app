@@ -14,7 +14,7 @@ body{
 } */
 
 .animate-paper:hover .paper{
-  animation: paperAnimation 2s;
+  animation: paperAnimation 1s;
 }
 
 @keyframes paperAnimation {
