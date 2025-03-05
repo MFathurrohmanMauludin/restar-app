@@ -138,6 +138,7 @@ const Chat = () => {
               className="animate-paper bg-[#6443DD] hover:bg-[#34169E] text-white h-[44px] w-[44px] rounded-full"
               onClick={fetchData}
               disabled={loading}
+              title="kirim"
             >
               {loading ? (
                 <FontAwesomeIcon fontSize={16} icon={faCircle} />

@@ -13,6 +13,10 @@ body{
   transition: transform .2s linear;
 } */
 
+.animate-paper:focus-within .paper{
+  animation: paperAnimation 1s;
+}
+
 .animate-paper:hover .paper{
   animation: paperAnimation 1s;
 }
