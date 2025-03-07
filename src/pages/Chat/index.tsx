@@ -7,8 +7,6 @@ import {
   faMagnifyingGlass,
   faMinus,
   faPaperPlane,
-  faScroll,
-  faThumbTack,
 } from "@fortawesome/free-solid-svg-icons";
 import { generateUniqueCode } from "../../utils/generatedCode";
 
@@ -42,6 +40,8 @@ const Chat = () => {
   const [history, setHistory] = useState<
     Record<string, { question: string }[]>
   >(JSON.parse(localStorage.getItem("chatHistory") || "{}"));
+  const [openNav, closeNav] = useState(true);
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id"); // Ambil nilai 'id' dari URL
@@ -102,7 +102,7 @@ const Chat = () => {
   return (
     <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
       {/* History */}
-      <div className="px-2 py-4 max-w-[36ch] border-r border-gray-300 max-sm:hidden max-md:hidden">
+      <div className={`px-2 py-4 max-w-[36ch] border-r border-gray-300 max-sm:hidden max-md:hidden`}>
         <div className="flex items-center justify-between mb-2">
           <span className="px-2 text-2xl font-semibold">Riwayat</span>
           <div className="space-x-0">
