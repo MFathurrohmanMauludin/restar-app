@@ -9,6 +9,7 @@ import {
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import { generateUniqueCode } from "../../utils/generatedCode";
+import ButtonComponent from "../../components/Button";
 
 interface Ingredient {
   name: string;
@@ -40,7 +41,7 @@ const Chat = () => {
   const [history, setHistory] = useState<
     Record<string, { question: string }[]>
   >(JSON.parse(localStorage.getItem("chatHistory") || "{}"));
-  const [openNav, closeNav] = useState(true);
+  const [openNav, setOpenNav] = useState(true);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -99,27 +100,30 @@ const Chat = () => {
     }
   }, [id]);
 
+  console.log(openNav);
+  
+
   return (
     <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
       {/* History */}
-      <div className={`px-2 py-4 max-w-[36ch] border-r border-gray-300 max-sm:hidden max-md:hidden`}>
+      <div
+        className={`px-2 py-4 max-w-[36ch] border-r border-gray-300 max-sm:hidden max-md:hidden`}
+      >
         <div className="flex items-center justify-between mb-2">
           <span className="px-2 text-2xl font-semibold">Riwayat</span>
           <div className="space-x-0">
-            <button
-              className="cursor-pointer w-8 h-8 hover:bg-[#34169E] hover:text-white rounded"
-              onClick={() => console.log("test")}
+            <ButtonComponent
+              control={() => console.log("test")}
               title="Cari riwayat"
-            >
-              <FontAwesomeIcon icon={faMagnifyingGlass} fontSize={16} />
-            </button>
-            <button
-              className="cursor-pointer w-8 h-8 hover:bg-[#34169E] hover:text-white rounded"
-              onClick={() => console.log("test")}
+              icon={faMagnifyingGlass}
+              key={1}
+            />
+            <ButtonComponent
+              control={() => setOpenNav(!openNav)}
               title="Tutup navigation"
-            >
-              <FontAwesomeIcon icon={faMinus} fontSize={16} />
-            </button>
+              icon={faMinus}
+              key={2}
+            />
           </div>
         </div>
         {Object.keys(history).map((key, index) => (
