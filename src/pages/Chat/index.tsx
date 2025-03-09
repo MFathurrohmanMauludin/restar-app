@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBars,
   faCircle,
   faMagnifyingGlass,
   faMinus,
@@ -101,13 +102,20 @@ const Chat = () => {
   }, [id]);
 
   console.log(openNav);
-  
 
   return (
-    <div className="grid grid-cols-[20%_80%] h-screen max-sm:grid-cols-1 max-md:grid-cols-1">
+    <div
+      className={`relative grid h-screen max-sm:grid-cols-1 max-md:grid-cols-1 z-1 bg-white ${
+        !openNav ? "grid-cols-[20%_80%]" : "grid-cols-1"
+      }`}
+    >
       {/* History */}
       <div
-        className={`px-2 py-4 max-w-[36ch] border-r border-gray-300 max-sm:hidden max-md:hidden`}
+        className={`px-2 py-2 border-r border-gray-300 max-sm:hidden max-md:hidden transition-all duration-300 ease-in-out ${
+          openNav
+            ? "absolute -z-[100] translate-x-[-100px] opacity-0"
+            : "translate-x-0 opacity-100 z-1"
+        }`}
       >
         <div className="flex items-center justify-between mb-2">
           <span className="px-2 text-2xl font-semibold">Riwayat</span>
@@ -117,21 +125,30 @@ const Chat = () => {
               title="Cari riwayat"
               icon={faMagnifyingGlass}
               key={1}
+              property={
+                "cursor-pointer text-gray-800 w-8 h-8 hover:bg-[#34169E] hover:text-white rounded"
+              }
             />
             <ButtonComponent
               control={() => setOpenNav(!openNav)}
               title="Tutup navigation"
               icon={faMinus}
               key={2}
+              property={
+                "cursor-pointer text-gray-800 w-8 h-8 hover:bg-[#34169E] hover:text-white rounded"
+              }
             />
           </div>
         </div>
         {Object.keys(history).map((key, index) => (
           <NavLink
-            className={`line-clamp-1 px-2 py-1 space-x-1 ${
-              key === id &&
-              "text-white bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-purple-300 via-violet-700 to-purple-300"
-            } text-gray-800 hover:text-white hover:bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] hover:from-purple-300 hover:via-violet-700 hover:to-purple-300 rounded`}
+            className={`line-clamp-1 px-2 py-1 space-x-1 
+      ${
+        key === id
+          ? "text-white bg-gradient-to-r from-purple-300 via-violet-700 to-purple-300"
+          : "text-gray-800"
+      } 
+      hover:text-white hover:bg-gradient-to-r hover:from-purple-300 hover:via-violet-700 hover:to-purple-300 rounded`}
             to={`/start-chat?id=${key}`}
             key={index}
           >
@@ -141,7 +158,17 @@ const Chat = () => {
       </div>
 
       {/* Chat Section */}
-      <div className="relative flex flex-col h-screen">
+      <div className={`relative flex flex-col h-screen ${openNav && 'z-1'}`}>
+        <ButtonComponent
+          control={() => setOpenNav(!openNav)}
+          title="Cari riwayat"
+          icon={faBars}
+          key={1}
+          property={`absolute top-2 left-2 cursor-pointer text-gray-800 w-8 h-8 hover:bg-[#34169E] hover:text-white rounded scale-0 ${
+            openNav && "scale-100"
+          } transition-all duration-100 ease-in-out`}
+        />
+
         <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4 max-md:px-6">
           {response.length > 0 ? (
             <div className="border border-gray-300 p-2 rounded">
