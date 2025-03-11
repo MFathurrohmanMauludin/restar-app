@@ -101,20 +101,18 @@ const Chat = () => {
     }
   }, [id]);
 
-  console.log(openNav);
-
   return (
     <div
-      className={`relative grid h-screen max-sm:grid-cols-1 max-md:grid-cols-1 z-1 bg-white ${
-        !openNav ? "grid-cols-[20%_80%]" : "grid-cols-1"
+      className={`bg-white z-1 grid h-screen max-sm:grid-cols-1 max-md:grid-cols-1 ${
+        !openNav ? "grid-cols-[auto_80%]" : "grid-cols-1"
       }`}
     >
       {/* History */}
       <div
         className={`px-2 py-2 border-r border-gray-300 max-sm:hidden max-md:hidden transition-all duration-300 ease-in-out ${
           openNav
-            ? "absolute -z-[100] translate-x-[-100px] opacity-0"
-            : "translate-x-0 opacity-100 z-1"
+            ? "absolute -z-1 -translate-x-full opacity-0"
+            : "block translate-x-0 opacity-100 z-1"
         }`}
       >
         <div className="flex items-center justify-between mb-2">
@@ -158,7 +156,7 @@ const Chat = () => {
       </div>
 
       {/* Chat Section */}
-      <div className={`relative flex flex-col h-screen ${openNav && 'z-1'}`}>
+      <div className={`relative flex flex-col h-screen w-full bg-white z-1 transition-all duration-300`}>
         <ButtonComponent
           control={() => setOpenNav(!openNav)}
           title="Cari riwayat"

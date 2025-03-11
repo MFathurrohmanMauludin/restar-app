@@ -14,7 +14,7 @@ const Header = () => {
           height={100}
           alt="logo"
         />
-      </NavLink>
+      </NavLink> 
 
       {pathname !== "/start-chat" && (
         <nav className="space-x-4">
