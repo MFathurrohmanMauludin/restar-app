@@ -150,7 +150,7 @@ const Chat = () => {
             to={`/start-chat?id=${key}`}
             key={index}
           >
-            <span className="text-md">{history[key][0]?.question}</span>
+            <span className="text-md" title={history[key][0]?.question}>{history[key][0]?.question}</span>
           </NavLink>
         ))}
       </div>
