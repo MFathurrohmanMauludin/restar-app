@@ -164,7 +164,7 @@ const Chat = () => {
           key={1}
           property={`absolute top-2 left-2 cursor-pointer text-gray-800 w-8 h-8 hover:bg-[#34169E] hover:text-white rounded scale-0 ${
             openNav && "scale-100"
-          } transition-all duration-100 ease-in-out`}
+          } transition-all duration-200 ease-out-in`}
         />
 
         <div className="overflow-y-auto px-[10em] py-6 max-h-[80%] max-sm:px-4 max-md:px-6">
