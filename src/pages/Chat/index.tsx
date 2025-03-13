@@ -156,7 +156,7 @@ const Chat = () => {
       </div>
 
       {/* Chat Section */}
-      <div className={`relative flex flex-col h-screen bg-white z-1`}>
+      <div className="relative flex flex-col h-screen bg-white z-1">
         <ButtonComponent
           control={() => setOpenNav(!openNav)}
           title="Cari riwayat"
