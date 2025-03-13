@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -45,6 +45,7 @@ const Chat = () => {
   const [openNav, setOpenNav] = useState(true);
 
   const location = useLocation();
+  const navigate = useNavigate(); // Hook for changing the URL
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id"); // Ambil nilai 'id' dari URL
 
@@ -82,6 +83,9 @@ const Chat = () => {
       chatHistory[uniqueKey] = [{ question, response: parsedResponse }];
       localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
       setHistory(chatHistory); // Update history state
+
+      // Update URL to reflect new chat ID
+      navigate(`/start-chat?id=${uniqueKey}`);
     } catch (error) {
       setResponse([]);
       console.error("Error:", error);
@@ -120,7 +124,7 @@ const Chat = () => {
           <div className="space-x-0">
             <ButtonComponent
               control={() => console.log("test")}
-              title="Cari riwayat"
+              title="cari riwayat"
               icon={faMagnifyingGlass}
               key={1}
               property={
@@ -129,7 +133,7 @@ const Chat = () => {
             />
             <ButtonComponent
               control={() => setOpenNav(!openNav)}
-              title="Tutup navigation"
+              title="tutup sidebar"
               icon={faMinus}
               key={2}
               property={
@@ -138,6 +142,11 @@ const Chat = () => {
             />
           </div>
         </div>
+
+        {
+
+        }
+
         {Object.keys(history).map((key, index) => (
           <NavLink
             className={`line-clamp-1 px-2 py-1 space-x-1 
@@ -150,16 +159,24 @@ const Chat = () => {
             to={`/start-chat?id=${key}`}
             key={index}
           >
-            <span className="text-md" title={history[key][0]?.question}>{history[key][0]?.question}</span>
+            <span className="text-md" title={history[key][0]?.question}>
+              {history[key][0]?.question}
+            </span>
           </NavLink>
         ))}
+
+        {
+          Object.keys(history).length === 0 && 
+          <span className="px-2">Tidak ada pencarian</span>
+        }
+
       </div>
 
       {/* Chat Section */}
       <div className="relative flex flex-col h-screen bg-white z-1">
         <ButtonComponent
           control={() => setOpenNav(!openNav)}
-          title="Cari riwayat"
+          title="buka sidebar"
           icon={faBars}
           key={1}
           property={`absolute top-2 left-2 cursor-pointer text-gray-800 w-8 h-8 hover:bg-[#34169E] hover:text-white rounded scale-0 ${
